@@ -1,0 +1,36 @@
+model Session {
+  id        String   @id @default(uuid())
+  startTime DateTime
+  endTime   DateTime
+  student   Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  dean      Dean     @relation(fields: [deanId], references: [id])
+  deanId    String
+
+  @@index([studentId])
+  @@index([deanId])
+}
+
+model Student {
+  id           String    @id @default(uuid())
+  universityId String    @unique
+  password     String
+  sessions     Session[]
+}
+
+model Dean {
+  id           String    @id @default(uuid())
+  universityId String    @unique
+  password     String
+  sessions     Session[]
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
