@@ -148,34 +148,6 @@ router.get("/sessions/students", async (req: Request, res: Response) => {
   }
 });
 
-// route for dean to see pending sessions
-router.get("/sessions/deans", async (req: Request, res: Response) => {
-  const prisma = new PrismaClient();
-  const { authorization } = req.headers;
-  try {
-    const dean = await prisma.dean.findUnique({
-      where: {
-        id: authorization,
-      },
-    });
-    if (dean) {
-      const sessions = await prisma.session.findMany({
-        where: {
-          deanId: dean.id,
-          endTime: {
-            gt: new Date(),
-          },
-        },
-      });
-      res.json(sessions);
-    } else {
-      res.json({ message: "Invalid token" });
-    }
-  } catch (error) {
-    res.json({ message: error });
-  }
-});
-
 // route for student to book a session
 router.post("/sessions/book", async (req: Request, res: Response) => {
   const prisma = new PrismaClient();
